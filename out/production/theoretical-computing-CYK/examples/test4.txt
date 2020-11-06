@@ -1,8 +1,0 @@
-S : ACD | bBd | ab
-A : aB | aA | C
-B : aDS | aB
-
-C : aCS | CB | CC
-
-D : bD | ba
-E : AB | aDb

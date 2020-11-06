@@ -1,5 +1,0 @@
-S : AS | AA | BA | &
-A : aA | a
-B : bB | bC | C
-
-C : aA | bA | B | ab

@@ -58,7 +58,7 @@
             </VBox>
          </top>
          <left>
-            <BorderPane prefHeight="452.0" prefWidth="805.0" stylesheets="@../CSS/dark-theme.css" BorderPane.alignment="CENTER">
+            <BorderPane prefHeight="452.0" prefWidth="805.0" stylesheets="@dark-theme.css" BorderPane.alignment="CENTER">
                <left>
                   <VBox fillWidth="false" focusTraversable="true" prefHeight="586.0" prefWidth="613.0" spacing="5.0" BorderPane.alignment="CENTER">
                      <children>
