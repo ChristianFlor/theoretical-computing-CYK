@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 public class ContextFreeGrammar {
+    public static final String DATA_PATH = "./data/answers.txt";
     public final static Character start = 'S';
     private HashSet<Character> variables;
     private HashSet<Character> terminals;
@@ -15,7 +16,9 @@ public class ContextFreeGrammar {
         productionRules = new HashMap<>();
         addVariable(start);
     }
+    public ContextFreeGrammar(String src) {
 
+    }
     /**
      * @return True if the variable was not
      * @throws NullPointerException if var is null
