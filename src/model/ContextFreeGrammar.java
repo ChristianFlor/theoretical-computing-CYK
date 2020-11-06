@@ -5,7 +5,8 @@ import java.util.HashSet;
 
 public class ContextFreeGrammar {
     public static final String DATA_PATH = "./data/answers.txt";
-    public final static Character start = 'S';
+    public final static Character START = 'S';
+    public final static String LAMBDA = "";
     private HashSet<Character> variables;
     private HashSet<Character> terminals;
     private HashMap<Character, HashSet<String>> productionRules;
@@ -14,7 +15,7 @@ public class ContextFreeGrammar {
         variables = new HashSet<>();
         terminals = new HashSet<>();
         productionRules = new HashMap<>();
-        addVariable(start);
+        addVariable(START);
     }
     public ContextFreeGrammar(String src) {
 
@@ -54,6 +55,7 @@ public class ContextFreeGrammar {
 
     /** Associates the specified body to a new production of the head variable
      * @param  head head exists in the variables set or alphabet
+     * @paran body If body is the empty string then lambda is assumed. body must not be null
      * @return True if the production was added, false otherwise
      * @throws IllegalArgumentException when T, which is a variable that can only be used by the grammar internally, is tried to be added manually (in the body)
      * */
@@ -78,5 +80,43 @@ public class ContextFreeGrammar {
             addVariable(c);
             addTerminal(c);
         }
+    }
+
+    public ContextFreeGrammar removeNonTerminalVaribles() {
+        return null;
+    }
+
+    public ContextFreeGrammar removeNonReachableVaribles() {
+        return null;
+    }
+
+    public ContextFreeGrammar removeLambdaProductions() {
+        HashSet<Character> anul = new HashSet<>();
+        for(Character var : variables) {
+            if(productionRules.get(var).contains(LAMBDA)) {
+                anul.add(var);
+            }
+        }
+        int previousSize = 0;
+        while(previousSize < anul.size()) {
+            previousSize = anul.size();
+            for (Character var : variables) {
+                HashSet<String> prods = productionRules.get(var);
+                for(String prod : prods) {
+                    for(Character p : anul) {
+                        prod.replace(p.toString(), LAMBDA);
+                    }
+                    if(prod.isEmpty()) {
+                        anul.add(var);
+                        break;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    public ContextFreeGrammar removeUnitaryProductions() {
+        return null;
     }
 }
