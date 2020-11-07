@@ -6,7 +6,7 @@ import java.util.HashSet;
 public class ContextFreeGrammar {
     public static final String DATA_PATH = "./data/answers.txt";
     public final static Character START = 'S';
-    public final static String LAMBDA = "";
+    public final static String LAMBDA = "&";
     private HashSet<Character> variables;
     private HashSet<Character> terminals;
 
@@ -18,8 +18,68 @@ public class ContextFreeGrammar {
         productionRules = new HashMap<>();
         addVariable(START);
     }
-    public ContextFreeGrammar(String src) {
+    public void read(String source) throws Exception {
+        String[] lines = source.split("\n");
+        for (int i = 0; i < lines.length; i++) {
+            String line = lines[i];
+            if (line != null && line.trim().length() != 0){
+                line = line.replace(" ", "");
 
+                String[] partes = line.split(":");
+                if (partes.length != 2){
+                    throw new Exception("Regla sin el formato : " + line);
+                }
+
+                if (partes[0].length() != 1){
+                    throw new Exception("La parte izquierda de una regla debe ser un caracter");
+                }
+
+                char generador = partes[0].charAt(0);
+                if(generador < 'A' || generador > 'Z' || generador == LAMBDA.charAt(0)){
+                    throw new Exception("El generador debe ser una letra mayuscula");
+                }
+
+                String[] productions = partes[1].split("|");
+                for (int j = 0; j < productions.length; j++){
+                    String prod = productions[j].trim();
+
+                    for(int k = 0; k < prod.length(); k++){
+                        char c = prod.charAt(k);
+                        if (c != LAMBDA.charAt(0) ){
+                            if(Character.isLetter(c) == false){
+                                throw new Exception("el caracter " + c + " no es un terminal, variable o lambda");
+                            }
+                            //---------------------------
+                            else if(Character.isLowerCase(c)){
+                                if(terminals.contains(c) == false){
+                                    terminals.add(c);
+                                }
+                            }
+                            else if( Character.isUpperCase(c)){
+                                if (variables.contains(c) == false){
+                                    variables.add(c);
+                                }
+                            }
+                            //-----------------------------
+                        }
+                        else{
+                            if (prod.length() > 1){
+                                throw new Exception("Lambda debe aparecer sola y una unica vez en una produccion");
+                            }
+                        }
+                    }
+
+                    productions[j] = prod;
+                }
+
+                addProductionRule(generador,productions.toString());
+
+                //-----------------------
+                if(variables.contains(generador) == false){
+                    variables.add(generador);
+                }
+            }
+        }
     }
     /**
      * @return True if the variable was valid and was not already registered

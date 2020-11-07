@@ -7,10 +7,20 @@ import java.util.function.Consumer;
 
 public class ContextFreeGrammarOperations {
     public ContextFreeGrammar removeNonTerminalVaribles(ContextFreeGrammar cfg) {
+        HashSet<Character> terminales = new HashSet<>();
+        HashSet<Character> variables = (HashSet<Character>)cfg.getVariables().clone();
+        /*for(Character var : terminales) {
+            if(terminales.get(var).contains(ContextFreeGrammar.LAMBDA)) {
+                anul.add(var);
+            }
+        }*/
         return null;
     }
 
     public ContextFreeGrammar removeNonReachableVaribles(ContextFreeGrammar cfg) {
+
+
+
         return null;
     }
 

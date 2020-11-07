@@ -38,6 +38,36 @@ public class MainController {
 	private TextArea gramatic;
 
 	/**
+	 *
+	 */
+	@FXML
+	private TextField tfEndless;
+
+	/**
+	 *
+	 */
+	@FXML
+	private TextField tfLambda;
+
+	/**
+	 *
+	 */
+	@FXML
+	private TextField tfBinary;
+
+	/**
+	 *
+	 */
+	@FXML
+	private TextField tfUnreachable;
+
+	/**
+	 *
+	 */
+	@FXML
+	private TextField tfUnit;
+
+	/**
 	 * 
 	 */
 	@FXML
@@ -47,7 +77,7 @@ public class MainController {
 	 * 
 	 */
 	@FXML
-	private TextField stirngw;
+	private TextField stringw;
 
 
 	/**
@@ -121,8 +151,13 @@ public class MainController {
 	@FXML
 	void clean(ActionEvent event) {
 
-		gramatic.setEditable(true); gramatic.setText("");
-
+		gramatic.setEditable(true);
+		gramatic.setText("");
+		tfEndless.setText("");
+		tfUnreachable.setText("");
+		tfLambda.setText("");
+		tfUnit.setText("");
+		tfBinary.setText("");
 		Alert a = new Alert(AlertType.INFORMATION);
 		a.setContentText("Ingrese la gramatica");
 		a.show();
@@ -131,45 +166,60 @@ public class MainController {
 	/**
 	 * 
 	 */
-    @FXML
-    void registerGramatic(ActionEvent event) {
-    	try {
-    	if( !gramatic.getText().isEmpty() ){
-    		program = new ContextFreeGrammar(gramatic.getText());
-        	Alert a = new Alert(AlertType.INFORMATION);
-    		a.setContentText("La gramatica se ha sido registrado correctamente");
-    		a.show();
-    		gramatic.setEditable(false);
+	@FXML
+	void deleteEndless(ActionEvent event) {
+		try {
+			if( !gramatic.getText().isEmpty() ){
+				program = new ContextFreeGrammar();
+				program.read(gramatic.getText());
+				Alert a = new Alert(AlertType.INFORMATION);
+				a.setContentText("La gramatica se ha sido registrado correctamente");
+				a.show();
+				gramatic.setEditable(false);
 
-   		}else {
-   			Alert b = new Alert(AlertType.ERROR);
-   	   		b.setContentText("Los gramatica no puede ser registrar, debe tener contenido");
-   	   		b.show();
-   		}
-    	
-		
-    	}catch(Exception e) {
-    		Alert a = new Alert(AlertType.ERROR);
-    		a.setContentText("Digite los gramatica valida");
-    		a.show();
-    	}
-    	
-    }
+			}else {
+				Alert b = new Alert(AlertType.ERROR);
+				b.setContentText("Los gramatica no puede ser registrar, debe tener contenido");
+				b.show();
+			}
 
+
+		}catch(Exception e) {
+			Alert a = new Alert(AlertType.ERROR);
+			a.setContentText("Digite los gramatica valida");
+			a.show();
+		}
+	}
+
+	@FXML
+	void deleteUnreachable(ActionEvent event) {
+
+	}
+	@FXML
+	void lambdaProductions(ActionEvent event) {
+
+	}
+
+	@FXML
+	void unitProductions(ActionEvent event) {
+
+	}
+	@FXML
+	void binaryAndSimple(ActionEvent event) {
+
+	}
 	/**
 	 *
 	 */
 	@FXML
 	void algorithmCYK(ActionEvent event) {
-		String w = stirngw.getText();
+		String w = stringw.getText();
 		gridP1 = new GridPane();
 		gridP1.setHgap(3);
 		gridP1.setVgap(3);
 		scrollP1.setContent(gridP1);
 		//traer matrix resultante
 		//program.possibleW(w);
-
-
 	}
 
 	/**
