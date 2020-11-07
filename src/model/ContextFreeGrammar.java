@@ -9,6 +9,7 @@ public class ContextFreeGrammar {
     public final static String LAMBDA = "";
     private HashSet<Character> variables;
     private HashSet<Character> terminals;
+
     private HashMap<Character, HashSet<String>> productionRules;
 
     public ContextFreeGrammar() {
@@ -82,41 +83,15 @@ public class ContextFreeGrammar {
         }
     }
 
-    public ContextFreeGrammar removeNonTerminalVaribles() {
-        return null;
+    public HashSet<Character> getVariables() {
+        return variables;
     }
 
-    public ContextFreeGrammar removeNonReachableVaribles() {
-        return null;
+    public HashSet<Character> getTerminals() {
+        return terminals;
     }
 
-    public ContextFreeGrammar removeLambdaProductions() {
-        HashSet<Character> anul = new HashSet<>();
-        for(Character var : variables) {
-            if(productionRules.get(var).contains(LAMBDA)) {
-                anul.add(var);
-            }
-        }
-        int previousSize = 0;
-        while(previousSize < anul.size()) {
-            previousSize = anul.size();
-            for (Character var : variables) {
-                HashSet<String> prods = productionRules.get(var);
-                for(String prod : prods) {
-                    for(Character p : anul) {
-                        prod.replace(p.toString(), LAMBDA);
-                    }
-                    if(prod.isEmpty()) {
-                        anul.add(var);
-                        break;
-                    }
-                }
-            }
-        }
-        return null;
-    }
-
-    public ContextFreeGrammar removeUnitaryProductions() {
-        return null;
+    public HashMap<Character, HashSet<String>> getProductionRules() {
+        return productionRules;
     }
 }
