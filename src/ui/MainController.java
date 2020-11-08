@@ -38,36 +38,6 @@ public class MainController {
 	private TextArea gramatic;
 
 	/**
-	 *
-	 */
-	@FXML
-	private TextField tfEndless;
-
-	/**
-	 *
-	 */
-	@FXML
-	private TextField tfLambda;
-
-	/**
-	 *
-	 */
-	@FXML
-	private TextField tfBinary;
-
-	/**
-	 *
-	 */
-	@FXML
-	private TextField tfUnreachable;
-
-	/**
-	 *
-	 */
-	@FXML
-	private TextField tfUnit;
-
-	/**
 	 * 
 	 */
 	@FXML
@@ -153,11 +123,6 @@ public class MainController {
 
 		gramatic.setEditable(true);
 		gramatic.setText("");
-		tfEndless.setText("");
-		tfUnreachable.setText("");
-		tfLambda.setText("");
-		tfUnit.setText("");
-		tfBinary.setText("");
 		Alert a = new Alert(AlertType.INFORMATION);
 		a.setContentText("Ingrese la gramatica");
 		a.show();
@@ -167,7 +132,7 @@ public class MainController {
 	 * 
 	 */
 	@FXML
-	void deleteEndless(ActionEvent event) {
+	void convertToFNC(ActionEvent event) {
 		try {
 			if( !gramatic.getText().isEmpty() ){
 				program = new ContextFreeGrammar();
@@ -191,23 +156,6 @@ public class MainController {
 		}
 	}
 
-	@FXML
-	void deleteUnreachable(ActionEvent event) {
-
-	}
-	@FXML
-	void lambdaProductions(ActionEvent event) {
-
-	}
-
-	@FXML
-	void unitProductions(ActionEvent event) {
-
-	}
-	@FXML
-	void binaryAndSimple(ActionEvent event) {
-
-	}
 	/**
 	 *
 	 */
