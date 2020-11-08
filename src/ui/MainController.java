@@ -132,7 +132,7 @@ public class MainController {
 	 * 
 	 */
 	@FXML
-	void convertToFNC(ActionEvent event) {
+	void convert(ActionEvent event) {
 		try {
 			if( !gramatic.getText().isEmpty() ){
 				program = new ContextFreeGrammar();
