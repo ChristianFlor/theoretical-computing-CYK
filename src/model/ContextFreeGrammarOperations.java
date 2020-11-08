@@ -100,15 +100,55 @@ public class ContextFreeGrammarOperations {
     public ContextFreeGrammar removeNonTerminalVariables(ContextFreeGrammar cfg) {
         HashSet<Character> terminales = new HashSet<>();
         HashSet<Character> variables = (HashSet<Character>) cfg.getVariables().clone();
-        /*for(Character var : terminales) {
-            if(terminales.get(var).contains(ContextFreeGrammar.LAMBDA)) {
-                anul.add(var);
+        HashSet<Character> production = (HashSet<Character>) cfg.getProductionRules().clone();
+
+        for(Character c : production) {
+            boolean str = production.equals(c.equals(Character.isLowerCase(c)));
+            if(c.equals(ContextFreeGrammar.LAMBDA) || str ==true ) {
+                terminales.add(c);
             }
-        }*/
+        }
+        boolean change = true;
+        while(change){
+            HashSet<Character> terInit =new HashSet<>(terminales) ;
+            for (Character c : production) {
+                if(terminales.contains(c)==false){
+                    if(production.equals(c.equals(Character.isLowerCase(c))) == true ){
+                        terminales.add(c);
+                    }
+                }
+            }
+            if(terInit.size() == terminales.size()){
+                change = false;
+            }
+        }
         return null;
     }
 
     public ContextFreeGrammar removeNonReachableVariables(ContextFreeGrammar cfg) {
+        HashSet<Character> alc =new HashSet<>() ; alc.add(ContextFreeGrammar.LAMBDA.charAt(0));
+        HashSet<Character> analize = new HashSet<>();
+        boolean change = true;
+        while(change){
+            HashSet<Character> alcInit =new HashSet<>(alc) ;
+            for (Character c : alc) {
+                if(analize.contains(c) == false){
+                    HashMap<Character, HashSet<String>> newProductionRules = cfg.getProductionRules();
+                    if(newProductionRules != null){
+                        for (String prod : cfg.getProductionRules().get(c)) {
+                            //HashSet<Character> lista = prod.equals(c.equals(Character.isUpperCase(c)));
+                            //alc = alc.addAll(lista.clone().toString().charAt());
+                        }
+
+                    }
+                    analize.add(c);
+                }
+            }
+            if(alcInit.size() == alc.size()){
+                change = false;
+            }
+        }
+
         return null;
     }
 
