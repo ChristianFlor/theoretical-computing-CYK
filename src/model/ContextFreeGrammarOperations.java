@@ -99,31 +99,62 @@ public class ContextFreeGrammarOperations {
     }
 
     public ContextFreeGrammar removeNonTerminalVariables(ContextFreeGrammar cfg) {
-        HashSet<Character> terminales = new HashSet<>();
-        HashSet<Character> variables = (HashSet<Character>) cfg.getVariables().clone();
-        HashSet<Character> production = (HashSet<Character>) cfg.getProductionRules().clone();
-
-        for(Character c : production) {
-            boolean str = production.equals(c.equals(Character.isLowerCase(c)));
-            if(c.equals(ContextFreeGrammar.LAMBDA) || str ==true ) {
-                terminales.add(c);
+        HashSet<Character> term = new HashSet<>();
+        HashSet<Character> nonTerm = (HashSet<Character>) cfg.getVariables().clone(); // it is nonterm only after finding all terminal variables
+        HashMap<Character, HashSet<String>> originalProductionRules = cfg.getProductionRules();
+        // Initialize
+        for(Character var : nonTerm) {
+            for(String prod : originalProductionRules.get(var)) {
+                boolean containsOnlyTerminals = true;
+                for(int i = 0; i < prod.length() && containsOnlyTerminals; i++) {
+                    containsOnlyTerminals = cfg.getTerminals().contains(prod.charAt(i));
+                }
+                if(containsOnlyTerminals) {
+                    term.add(var);
+                    break;
+                }
             }
         }
-        boolean change = true;
-        while(change){
-            HashSet<Character> terInit =new HashSet<>(terminales) ;
-            for (Character c : production) {
-                if(terminales.contains(c)==false){
-                    if(production.equals(c.equals(Character.isLowerCase(c))) == true ){
-                        terminales.add(c);
+        // Repeat until term does not change
+        int previousSize = 0;
+        while (previousSize < term.size()) {
+            previousSize = term.size();
+            for (Character var : nonTerm) {
+                HashSet<String> prods = originalProductionRules.get(var);
+                for (String prod : prods) {
+                    for (Character p : term) {
+                        prod.replace(p.toString(), "");
+                    }
+                    for(Character ter : cfg.getTerminals()) {
+                        prod.replace(ter.toString(), "");
+                    }
+                    if (prod.isEmpty()) {
+                        term.add(var);
+                        break;
                     }
                 }
             }
-            if(terInit.size() == terminales.size()){
-                change = false;
+        }
+        // Remove non-terminal variables
+        nonTerm.remove(term);
+        ContextFreeGrammar newCfg = new ContextFreeGrammar();
+        for(Character var : term) {
+            cfg.addVariable(var);
+            HashSet<String> prods = originalProductionRules.get(var);
+            for(String body : prods) {
+                boolean safe = true;
+                for(Character ver : nonTerm) {
+                    if(body.contains(ver.toString())) { // do not add productions that contain non-terminal variables
+                        safe = false;
+                        break;
+                    }
+                }
+                if(safe) {
+                    newCfg.addProductionRule(var, body);
+                }
             }
         }
-        return null;
+        return newCfg;
     }
 
     public ContextFreeGrammar removeNonReachableVariables(ContextFreeGrammar cfg) {
@@ -159,11 +190,13 @@ public class ContextFreeGrammarOperations {
         HashMap<Character, HashSet<String>> originalProductionRules = cfg.getProductionRules();
         HashMap<Character, HashSet<String>> newProductionRules = new HashMap<>();
         originalProductionRules.forEach((head, bodies) -> newProductionRules.put(head, (HashSet<String>) bodies.clone()));
+        // Initialize
         for (Character var : variables) {
             if (newProductionRules.get(var).contains(ContextFreeGrammar.LAMBDA)) {
                 anul.add(var);
             }
         }
+        // Repeat until anul does not change
         int previousSize = 0;
         while (previousSize < anul.size()) {
             previousSize = anul.size();
@@ -180,6 +213,7 @@ public class ContextFreeGrammarOperations {
                 }
             }
         }
+        // Simulate every lambda production
         int productions = 0;
         for (Character var : variables) {
             productions += newProductionRules.get(var).size();
@@ -201,6 +235,7 @@ public class ContextFreeGrammarOperations {
                 productions += newProductionRules.get(var).size();
             }
         }
+        // Create new CFG with the resulting productions and return it
         ContextFreeGrammar newCfg = new ContextFreeGrammar();
         newProductionRules.forEach((head, bodies) -> {
             cfg.addVariable(head);
