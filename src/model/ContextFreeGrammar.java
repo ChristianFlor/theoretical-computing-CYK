@@ -66,9 +66,6 @@ public class ContextFreeGrammar {
             throw new IllegalArgumentException("T is a character that can only be used by the grammar to perform CNF conversion");
         }
         addVariablesAndTerminals(body); //register everything present in the body
-        if(!productionRules.containsKey(head)) {
-            productionRules.put(head, new HashSet<>());
-        }
         return productionRules.get(head).add(body);
     }
 

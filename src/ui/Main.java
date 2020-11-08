@@ -7,6 +7,7 @@
 package ui;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Scanner;
 
 import javafx.application.Application;
@@ -30,16 +31,16 @@ public class Main extends Application{
 		ContextFreeGrammarOperations cfgo = new ContextFreeGrammarOperations();
 		System.out.println("How many variables?");
 		int vars = Integer.parseInt(s.nextLine());
-		System.out.println("Write the productions in this format: V : AB | XY | a | b | ... | ");
+		System.out.println("Write the productions in this format: V : AB | XY | a | b | ... | ''");
 		String input = "";
 		while(vars > 0) {
 			input += s.nextLine() + "\n";
+			System.out.println(Arrays.toString(input.split("\\|")));
 			vars--;
 		}
 
 		try {
 			ContextFreeGrammar cfg = cfgo.read(input);
-
 			System.out.println("****************");
 			cfg.getProductionRules().forEach((head, bodies) -> {
 				String line = head + " --> ";

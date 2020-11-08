@@ -26,13 +26,13 @@ public class ContextFreeGrammarOperations {
                 }
 
                 char head = parts[0].charAt(0);
-                if (head < 'A' || head > 'Z' || Character.toString(head).equals(ContextFreeGrammar.LAMBDA)) {
+                if (head < 'A' || head > 'Z') {
                     throw new Exception("El generador debe ser una letra mayuscula");
                 }
                 cfg.addVariable(head);
                 String[] productions = parts[1].split("\\|");
                 for (int j = 0; j < productions.length; j++) {
-                    String prod = productions[j].trim();
+                    String prod = productions[j].trim().replace("''", ContextFreeGrammar.LAMBDA); // translate '' into lambda
                     cfg.addProductionRule(head, prod);
                 }
             }
@@ -44,10 +44,13 @@ public class ContextFreeGrammarOperations {
      * Validates whether the given grammar produces the specified String
      *
      * @param cfg A context-free grammar that is assumed to be in CNF.
-     * @param w   The String that wants to be validated. It is assumed that the String contains only terminals
+     * @param w   The String that wants to be validated. It is assumed that the String contains only terminals or is lambda
      * @return true if the grammar produces the given String, false otherwise
      */
     public boolean CYK(ContextFreeGrammar cfg, String w) {
+        if(w.equals(ContextFreeGrammar.LAMBDA)) { // if it is lambda
+            return cfg.getProductionRules().get(ContextFreeGrammar.START).contains(w);
+        }
         int n = w.length();
         HashSet<Character>[][] cykMatrix = new HashSet[n][n];
         // Initialize
