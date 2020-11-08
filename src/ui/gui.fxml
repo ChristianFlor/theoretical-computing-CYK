@@ -70,15 +70,11 @@
                                     <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
                                  </padding>
                                  <children>
-                                    <TextArea fx:id="gramatic" prefHeight="271.0" prefWidth="560.0" style="-fx-background-color: white;" styleClass="context-menu" />
+                                    <TextArea fx:id="gramatic" prefHeight="297.0" prefWidth="560.0" style="-fx-background-color: white;" styleClass="context-menu" />
                                  </children>
                               </HBox>
                               <Separator orientation="VERTICAL" prefHeight="25.0" prefWidth="372.0" visible="false" />
-                              <Button mnemonicParsing="false" onAction="#convertToFNC" prefHeight="39.0" prefWidth="148.0" text="Convertir a FNC">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Button>
+                              <Button mnemonicParsing="false" onAction="#convert" text="Convertir a FNC" />
                            </children>
                         </VBox>
                         <Button mnemonicParsing="false" onAction="#clean" text="Limpiar" />
