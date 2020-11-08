@@ -171,7 +171,7 @@ public class MainController {
 		try {
 			if( !gramatic.getText().isEmpty() ){
 				program = new ContextFreeGrammar();
-				program.read(gramatic.getText());
+				//program.read(gramatic.getText()); //FIXME the method is in ContextFreeGrammarOperations.java
 				Alert a = new Alert(AlertType.INFORMATION);
 				a.setContentText("La gramatica se ha sido registrado correctamente");
 				a.show();
