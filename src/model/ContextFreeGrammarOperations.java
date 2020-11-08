@@ -1,9 +1,8 @@
 package model;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 public class ContextFreeGrammarOperations {
     // TODO The method has unnecessary validations that are already done by propieatary methods of CFG.
@@ -17,7 +16,6 @@ public class ContextFreeGrammarOperations {
             String line = lines[i];
             if (line != null && !line.trim().isEmpty()) {
                 line = line.replace(" ", "");
-
                 String[] parts = line.split(":");
                 if (parts.length != 2) {
                     throw new Exception("Regla sin el formato : " + line);
@@ -32,7 +30,7 @@ public class ContextFreeGrammarOperations {
                     throw new Exception("El generador debe ser una letra mayuscula");
                 }
                 cfg.addVariable(head);
-                String[] productions = parts[1].split("|");
+                String[] productions = parts[1].split("\\|");
                 for (int j = 0; j < productions.length; j++) {
                     String prod = productions[j].trim();
                     cfg.addProductionRule(head, prod);
@@ -59,11 +57,11 @@ public class ContextFreeGrammarOperations {
         }
         // Repeat until j = n
         for (int j = 1; j < n; j++) {
-            for (int i = 0; i < n; i++) {
+            for (int i = 0; i < n - j; i++) {
                 cykMatrix[i][j] = new HashSet<>();
-                for (int k = 0; k <= j; k++) {
+                for (int k = 0; k <= j - 1; k++) {
                     HashSet<Character> B = cykMatrix[i][k]; // Xik
-                    HashSet<Character> C = cykMatrix[i + k][j - k]; // X(i+k),(j-k)
+                    HashSet<Character> C = cykMatrix[i + k + 1][j - k - 1]; // X(i+k),(j-k)
                     String[] prods = cartesianProduct(B, C);
                     for(String body : prods) { // Xij := A in V / A --> BC is a production of G
                         checkBodyInProduction(cfg, cykMatrix, body, i, j);
