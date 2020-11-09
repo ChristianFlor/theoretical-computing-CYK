@@ -4,10 +4,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 public class ContextFreeGrammarOperations {
-    // TODO The method has unnecessary validations that are already done by propieatary methods of CFG.
-    // TODO All in english
-    // TODO Exception is too general
-    // FIXME Take into account the above comments
+
     private HashSet<Character>[][] cykMatrix;
 
     public ContextFreeGrammar read(String source) throws Exception {
@@ -19,16 +16,14 @@ public class ContextFreeGrammarOperations {
                 line = line.replace(" ", "");
                 String[] parts = line.split("->");
                 if (parts.length != 2) {
-                    throw new Exception("Regla sin el formato : " + line);
+                    throw new IllegalArgumentException("The line is in an invalid format : " + line);
                 }
-
                 if (parts[0].length() != 1) {
-                    throw new Exception("La parte izquierda de una regla debe ser un caracter");
+                    throw new IllegalArgumentException("CFG grammars must have productions like A -> w, where A is a variable and w is a string");
                 }
-
                 char head = parts[0].charAt(0);
                 if (head < 'A' || head > 'Z') {
-                    throw new Exception("El generador debe ser una letra mayuscula");
+                    throw new IllegalArgumentException("var must be an uppercase letter: " + head);
                 }
                 cfg.addVariable(head);
                 String[] productions = parts[1].split("\\|");

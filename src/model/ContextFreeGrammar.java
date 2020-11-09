@@ -23,19 +23,17 @@ public class ContextFreeGrammar {
     /**
      * @return True if the variable was valid and was not already registered
      * @throws NullPointerException     if var is null
-     * @throws IllegalArgumentException when T, which is a variable that can only be used by the grammar internally, is tried to be added manually
+     * @throws IllegalArgumentException When var is not an uppercase letter
      */
     public boolean addVariable(Character var) {
-        if (var == 'T') {
-            throw new IllegalArgumentException("T is a character that can only be used by the grammar to perform CNF conversion");
+        if(var == null) {
+            throw new NullPointerException();
         }
         if (Character.isAlphabetic(var) && Character.isUpperCase(var)) {
             boolean added = variables.add(var);
-            if (added) { //add trivial production here to avoid recursive madness between addVariable and addProductionRule
+            if (added) {
                 productionRules.put(var, new HashSet<>());
-                productionRules.get(var).add(var.toString()); //self-production of a variable is trivial, but it is still present
             }
-
             return added;
         }
         return false;
