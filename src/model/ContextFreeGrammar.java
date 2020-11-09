@@ -2,6 +2,7 @@ package model;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
 public class ContextFreeGrammar {
     public static final String DATA_PATH = "./data/answers.txt";
@@ -21,19 +22,17 @@ public class ContextFreeGrammar {
 
     /**
      * @return True if the variable was valid and was not already registered
-     * @throws NullPointerException if var is null
+     * @throws NullPointerException     if var is null
      * @throws IllegalArgumentException when T, which is a variable that can only be used by the grammar internally, is tried to be added manually
-     * */
+     */
     public boolean addVariable(Character var) {
-        if(var == 'T') {
+        if (var == 'T') {
             throw new IllegalArgumentException("T is a character that can only be used by the grammar to perform CNF conversion");
         }
-        if(Character.isAlphabetic(var) && Character.isUpperCase(var)) {
+        if (Character.isAlphabetic(var) && Character.isUpperCase(var)) {
             boolean added = variables.add(var);
-            if(added) { //add trivial production here to avoid recursive madness between addVariable and addProductionRule
-                if(!productionRules.containsKey(var)) {
-                    productionRules.put(var, new HashSet<>());
-                }
+            if (added) { //add trivial production here to avoid recursive madness between addVariable and addProductionRule
+                productionRules.put(var, new HashSet<>());
                 productionRules.get(var).add(var.toString()); //self-production of a variable is trivial, but it is still present
             }
 
@@ -43,26 +42,28 @@ public class ContextFreeGrammar {
     }
 
     public boolean addTerminal(Character term) {
-        if(term == null) {
+        if (term == null) {
             throw new NullPointerException("null cannot be a terminal");
         }
-        if(!Character.isAlphabetic(term) || !Character.isUpperCase(term)) { //any character can be a terminal, except uppercase letters
+        if (!Character.isAlphabetic(term) || !Character.isUpperCase(term)) { //any character can be a terminal, except uppercase letters
             return terminals.add(term);
         }
         return false;
     }
 
-    /** Associates the specified body to a new production of the head variable
-     * @param  head head exists in the variables set or alphabet
-     * @paran body If body is the empty string then lambda is assumed. body must not be null
+    /**
+     * Associates the specified body to a new production of the head variable
+     *
+     * @param head The variable that produces the body
      * @return True if the production was added, false otherwise
      * @throws IllegalArgumentException when T, which is a variable that can only be used by the grammar internally, is tried to be added manually (in the body)
-     * */
+     * @paran body If body is the empty string then lambda is assumed. body must not be null
+     */
     public boolean addProductionRule(Character head, String body) {
-        if(!variables.contains(head)) {
-            return false; //cannot add a production to a nonexistent variable, use addVariable(head) prior to trying again
+        if (!variables.contains(head)) {
+            addVariable(head);
         }
-        if(body.contains("T")) {
+        if (body.contains("T")) {
             throw new IllegalArgumentException("T is a character that can only be used by the grammar to perform CNF conversion");
         }
         addVariablesAndTerminals(body); //register everything present in the body
@@ -70,7 +71,7 @@ public class ContextFreeGrammar {
     }
 
     public void addVariablesAndTerminals(String string) {
-        for(int i = 0; i < string.length(); i++) {
+        for (int i = 0; i < string.length(); i++) {
             Character c = string.charAt(i);
             //try to add as variable and terminal as a maximum of one method will actually add the character to a set
             addVariable(c);
@@ -88,5 +89,19 @@ public class ContextFreeGrammar {
 
     public HashMap<Character, HashSet<String>> getProductionRules() {
         return productionRules;
+    }
+
+    @Override
+    public String toString() {
+        String output = "";
+        for (Character head : variables) {
+            String line = head + " ->";
+            HashSet<String> bodies = productionRules.get(head);
+            for (String body : bodies) {
+                line += (line.endsWith(">") ? " " : " | ") + " " + (body.equals(LAMBDA) ? "''" : body);
+            }
+            output += line + "\n";
+        }
+        return output;
     }
 }

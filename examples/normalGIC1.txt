@@ -1,0 +1,5 @@
+S -> X
+X -> AbX | aB | ''
+A -> Ab | Ca | b
+B -> aA | bB | a
+C -> Cab | aB

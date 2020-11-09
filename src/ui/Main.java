@@ -27,7 +27,7 @@ public class Main extends Application{
 	 * This class represents
 	 */
 	public static void main(String[] args) {
-		/*Scanner s = new Scanner(System.in);
+		Scanner s = new Scanner(System.in);
 		ContextFreeGrammarOperations cfgo = new ContextFreeGrammarOperations();
 		System.out.println("How many variables?");
 		int vars = Integer.parseInt(s.nextLine());
@@ -35,20 +35,13 @@ public class Main extends Application{
 		String input = "";
 		while(vars > 0) {
 			input += s.nextLine() + "\n";
-			System.out.println(Arrays.toString(input.split("\\|")));
 			vars--;
 		}
 
 		try {
 			ContextFreeGrammar cfg = cfgo.read(input);
 			System.out.println("****************");
-			cfg.getProductionRules().forEach((head, bodies) -> {
-				String line = head + " --> ";
-				for(String body : bodies) {
-					line += body + " ";
-				}
-				System.out.println(line);
-			});
+			cfg = cfgo.convertToCNF(cfg);
 			System.out.println("****************");
 
 			System.out.println("What string will you validate?");
@@ -57,7 +50,6 @@ public class Main extends Application{
 			e.printStackTrace();
 		}
 		s.close();
-		*/
 
 		launch();
 	}

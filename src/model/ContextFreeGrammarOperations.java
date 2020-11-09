@@ -16,7 +16,7 @@ public class ContextFreeGrammarOperations {
             String line = lines[i];
             if (line != null && !line.trim().isEmpty()) {
                 line = line.replace(" ", "");
-                String[] parts = line.split(":");
+                String[] parts = line.split("->");
                 if (parts.length != 2) {
                     throw new Exception("Regla sin el formato : " + line);
                 }
@@ -48,7 +48,7 @@ public class ContextFreeGrammarOperations {
      * @return true if the grammar produces the given String, false otherwise
      */
     public boolean CYK(ContextFreeGrammar cfg, String w) {
-        if(w.equals(ContextFreeGrammar.LAMBDA)) { // if it is lambda
+        if (w.equals(ContextFreeGrammar.LAMBDA)) { // if it is lambda
             return cfg.getProductionRules().get(ContextFreeGrammar.START).contains(w);
         }
         int n = w.length();
@@ -56,7 +56,7 @@ public class ContextFreeGrammarOperations {
         // Initialize
         for (int i = 0; i < n; i++) {
             cykMatrix[i][0] = new HashSet<>();
-            checkBodyInProduction(cfg, cykMatrix, w.charAt(i)+"", i, 0);
+            checkBodyInProduction(cfg, cykMatrix, w.charAt(i) + "", i, 0);
         }
         // Repeat until j = n
         for (int j = 1; j < n; j++) {
@@ -66,13 +66,13 @@ public class ContextFreeGrammarOperations {
                     HashSet<Character> B = cykMatrix[i][k]; // Xik
                     HashSet<Character> C = cykMatrix[i + k + 1][j - k - 1]; // X(i+k),(j-k)
                     String[] prods = cartesianProduct(B, C);
-                    for(String body : prods) { // Xij := A in V / A --> BC is a production of G
+                    for (String body : prods) { // Xij := A in V / A --> BC is a production of G
                         checkBodyInProduction(cfg, cykMatrix, body, i, j);
                     }
                 }
             }
         }
-        return cykMatrix[0][n-1].contains(ContextFreeGrammar.START);
+        return cykMatrix[0][n - 1].contains(ContextFreeGrammar.START);
     }
 
     private void checkBodyInProduction(ContextFreeGrammar cfg, HashSet<Character>[][] cykMatrix, String w, int i, int j) {
@@ -103,13 +103,13 @@ public class ContextFreeGrammarOperations {
         HashSet<Character> nonTerm = (HashSet<Character>) cfg.getVariables().clone(); // it is nonterm only after finding all terminal variables
         HashMap<Character, HashSet<String>> originalProductionRules = cfg.getProductionRules();
         // Initialize
-        for(Character var : nonTerm) {
-            for(String prod : originalProductionRules.get(var)) {
+        for (Character var : nonTerm) {
+            for (String prod : originalProductionRules.get(var)) {
                 boolean containsOnlyTerminals = true;
-                for(int i = 0; i < prod.length() && containsOnlyTerminals; i++) {
+                for (int i = 0; i < prod.length() && containsOnlyTerminals; i++) {
                     containsOnlyTerminals = cfg.getTerminals().contains(prod.charAt(i));
                 }
-                if(containsOnlyTerminals) {
+                if (containsOnlyTerminals) {
                     term.add(var);
                     break;
                 }
@@ -123,10 +123,10 @@ public class ContextFreeGrammarOperations {
                 HashSet<String> prods = originalProductionRules.get(var);
                 for (String prod : prods) {
                     for (Character p : term) {
-                        prod.replace(p.toString(), "");
+                        prod = prod.replace(p.toString(), "");
                     }
-                    for(Character ter : cfg.getTerminals()) {
-                        prod.replace(ter.toString(), "");
+                    for (Character ter : cfg.getTerminals()) {
+                        prod = prod.replace(ter.toString(), "");
                     }
                     if (prod.isEmpty()) {
                         term.add(var);
@@ -136,21 +136,21 @@ public class ContextFreeGrammarOperations {
             }
         }
         // Remove non-terminal variables
-        nonTerm.remove(term);
+        nonTerm.removeAll(term);
         ContextFreeGrammar newCfg = new ContextFreeGrammar();
-        for(Character var : term) {
+        for (Character var : term) {
             cfg.addVariable(var);
             HashSet<String> prods = originalProductionRules.get(var);
-            for(String body : prods) {
+            for (String body : prods) {
                 boolean safe = true;
-                for(Character ver : nonTerm) {
-                    if(body.contains(ver.toString())) { // do not add productions that contain non-terminal variables
+                for (Character ver : nonTerm) {
+                    if (body.contains(ver.toString())) { // do not add productions that contain non-terminal variables
                         safe = false;
                         break;
                     }
                 }
-                if(safe) {
-                    newCfg.addProductionRule(var, body);
+                if (safe) {
+                    boolean a = newCfg.addProductionRule(var, body);
                 }
             }
         }
@@ -158,30 +158,37 @@ public class ContextFreeGrammarOperations {
     }
 
     public ContextFreeGrammar removeNonReachableVariables(ContextFreeGrammar cfg) {
-        HashSet<Character> alc =new HashSet<>() ; alc.add(ContextFreeGrammar.LAMBDA.charAt(0));
-        HashSet<Character> analize = new HashSet<>();
-        boolean change = true;
-        while(change){
-            HashSet<Character> alcInit =new HashSet<>(alc) ;
-            for (Character c : alc) {
-                if(analize.contains(c) == false){
-                    HashMap<Character, HashSet<String>> newProductionRules = cfg.getProductionRules();
-                    if(newProductionRules != null){
-                        for (String prod : cfg.getProductionRules().get(c)) {
-                            //HashSet<Character> lista = prod.equals(c.equals(Character.isUpperCase(c)));
-                            //alc = alc.addAll(lista.clone().toString().charAt());
+        HashSet<Character> alc = new HashSet<>();
+        HashSet<Character> variables = cfg.getVariables();
+        HashMap<Character, HashSet<String>> originalProductionRules = cfg.getProductionRules();
+        // Initialize
+        alc.add(ContextFreeGrammar.START);
+        // Repeat until alc does not change
+        int previousSize = 0;
+        while (previousSize < alc.size()) {
+            previousSize = alc.size();
+            for (Character var : (HashSet<Character>)alc.clone()) {
+                HashSet<String> prods = originalProductionRules.get(var);
+                for (String prod : prods) {
+                    for (int i = 0; i < prod.length(); i++) {
+                        char p = prod.charAt(i);
+                        if (variables.contains(p)) {
+                            alc.add(p);
                         }
-
                     }
-                    analize.add(c);
                 }
             }
-            if(alcInit.size() == alc.size()){
-                change = false;
+        }
+        // Remove non-reachable variables
+        ContextFreeGrammar newCfg = new ContextFreeGrammar();
+        for (Character var : alc) {
+            cfg.addVariable(var);
+            HashSet<String> prods = originalProductionRules.get(var);
+            for (String body : prods) {
+                newCfg.addProductionRule(var, body);
             }
         }
-
-        return null;
+        return newCfg;
     }
 
     public ContextFreeGrammar removeLambdaProductions(ContextFreeGrammar cfg) {
@@ -204,7 +211,7 @@ public class ContextFreeGrammarOperations {
                 HashSet<String> prods = newProductionRules.get(var);
                 for (String prod : prods) {
                     for (Character p : anul) {
-                        prod.replace(p.toString(), "");
+                        prod = prod.replace(p.toString(), "");
                     }
                     if (prod.isEmpty()) {
                         anul.add(var);
@@ -222,9 +229,9 @@ public class ContextFreeGrammarOperations {
         while (previousSize < productions) {
             previousSize = productions;
             for (Character var : variables) {
-                HashSet<String> prods = (HashSet<String>) newProductionRules.get(var).clone();
+                HashSet<String> prods = newProductionRules.get(var);
                 productions -= prods.size();
-                for (String prod : prods) {
+                for (String prod : (HashSet<String>) prods.clone()) {
                     for (Character p : anul) {
                         simulateNullableVariablesInProductions(var, prod, p, newProductionRules);
                         if (var != ContextFreeGrammar.START) {
@@ -238,8 +245,8 @@ public class ContextFreeGrammarOperations {
         // Create new CFG with the resulting productions and return it
         ContextFreeGrammar newCfg = new ContextFreeGrammar();
         newProductionRules.forEach((head, bodies) -> {
-            cfg.addVariable(head);
-            bodies.forEach(body -> cfg.addProductionRule(head, body));
+            newCfg.addVariable(head);
+            bodies.forEach(body -> newCfg.addProductionRule(head, body));
         });
         return newCfg;
     }
@@ -252,22 +259,6 @@ public class ContextFreeGrammarOperations {
         }
     }
 
-    private void simulateUnitaryProductions(ContextFreeGrammar cfg, Character head, HashMap<Character, HashSet<String>> productionRules) {
-        for (String prod : productionRules.get(head)) {
-            if (prod.length() == 1 && cfg.getVariables().contains(prod.charAt(0))) { //if it is a unitary production
-                for (String prod2 : productionRules.get(prod.charAt(0))) { //simulate it
-                    if (prod2.length() == 1 && cfg.getVariables().contains(prod2.charAt(0))) { //recursive call to simulate bodies of secondary unitary production (i.e A --> B --> C)
-                        simulateUnitaryProductions(cfg, prod2.charAt(0), productionRules);
-                    } else {
-                        cfg.addProductionRule(head, prod2);
-                    }
-                }
-            } else {
-                cfg.addProductionRule(head, prod);
-            }
-        }
-    }
-
     public ContextFreeGrammar removeUnitaryProductions(ContextFreeGrammar cfg) {
         HashSet<Character> variables = (HashSet<Character>) cfg.getVariables().clone();
         HashMap<Character, HashSet<String>> originalProductionRules = cfg.getProductionRules();
@@ -276,7 +267,7 @@ public class ContextFreeGrammarOperations {
             newCfg.addVariable(head);
             newCfg.getProductionRules().get(head).remove(head.toString()); //remove unitary self production
             bodies.forEach(body -> {
-                simulateUnitaryProductions(newCfg, head, originalProductionRules);
+                simulateUnitaryProductions(newCfg, head, variables, originalProductionRules);
             });
         });
         //after that there are not unitary productions, but maybe there are variables without productions, delete them
@@ -286,5 +277,47 @@ public class ContextFreeGrammarOperations {
             }
         });
         return newCfg;
+    }
+
+    private void simulateUnitaryProductions(ContextFreeGrammar cfg, Character head, HashSet<Character> variables, HashMap<Character, HashSet<String>> productionRules) {
+        for (String prod : productionRules.get(head)) {
+            if (prod.length() == 1 && variables.contains(prod.charAt(0))) { //if it is a unitary production
+                if (prod.charAt(0) == head) {
+                    continue; // Avoid operating self productions
+                }
+                for (String prod2 : productionRules.get(prod.charAt(0))) { //simulate it
+                    if (prod2.length() == 1 && prod2.charAt(0) == prod.charAt(0)) {
+                        simulateUnitaryProductions(cfg, prod2.charAt(0), variables, productionRules);
+                        return; // Avoid operating self productions
+                    }
+                    cfg.addProductionRule(head, prod2);
+                }
+            } else {
+                cfg.addProductionRule(head, prod);
+            }
+        }
+    }
+
+    public ContextFreeGrammar makeProductionsBinaryAndSimple(ContextFreeGrammar cfg) {
+        return null;
+    }
+
+    public ContextFreeGrammar convertToCNF(ContextFreeGrammar cfg) {
+        System.out.println("Original");
+        System.out.println(cfg);
+        cfg = removeNonTerminalVariables(cfg);
+        System.out.println("removeNonTerminalVariables");
+        System.out.println(cfg);
+        cfg = removeNonReachableVariables(cfg);
+        System.out.println("removeNonReachableVariables");
+        System.out.println(cfg);
+        cfg = removeLambdaProductions(cfg);
+        System.out.println("removeLambdaProductions");
+        System.out.println(cfg);
+        cfg = removeUnitaryProductions(cfg);
+        System.out.println("removeUnitaryProductions");
+        System.out.println(cfg);
+        //cfg = makeProductionsBinaryAndSimple(cfg);
+        return cfg;
     }
 }
