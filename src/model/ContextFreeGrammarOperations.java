@@ -7,6 +7,14 @@ public class ContextFreeGrammarOperations {
 
     private HashSet<Character>[][] cykMatrix;
 
+    /**
+     * Reads a grammar from a given string.
+     * Please use S as the start variable and do not use the last letters from the alphabet (Z, Y, X...) as they are
+     * used as new variables in the process of CNF conversion
+     * @param source The string representation of the grammar which is similar to the format of {@link ContextFreeGrammar}.toString()
+     * @return A context free grammar representation of source string
+     * @throws IllegalArgumentException if the format of input string source is incorrect
+     */
     public ContextFreeGrammar read(String source) throws Exception {
         ContextFreeGrammar cfg = new ContextFreeGrammar();
         String[] lines = source.split("\n");
@@ -164,7 +172,7 @@ public class ContextFreeGrammarOperations {
         int previousSize = 0;
         while (previousSize < alc.size()) {
             previousSize = alc.size();
-            for (Character var : (HashSet<Character>)alc.clone()) {
+            for (Character var : (HashSet<Character>) alc.clone()) {
                 HashSet<String> prods = originalProductionRules.get(var);
                 for (String prod : prods) {
                     for (int i = 0; i < prod.length(); i++) {
@@ -296,7 +304,42 @@ public class ContextFreeGrammarOperations {
     }
 
     public ContextFreeGrammar makeProductionsBinaryAndSimple(ContextFreeGrammar cfg) {
-        return null;
+        HashSet<Character> variables = (HashSet<Character>) cfg.getVariables().clone();
+        HashSet<Character> terminals = (HashSet<Character>) cfg.getTerminals().clone();
+        HashMap<Character, HashSet<String>> originalProductionRules = cfg.getProductionRules();
+        ContextFreeGrammar newCfg = new ContextFreeGrammar();
+        char newVar = 'Z';
+        for(Character term : terminals) {
+            newCfg.addVariable(newVar);
+            newCfg.addProductionRule(newVar, term.toString());
+            newVar--;
+        }
+        originalProductionRules.forEach((head, bodies) -> {
+            newCfg.addVariable(head);
+            bodies.forEach(body -> {
+                makeBinary(newCfg, head, variables, originalProductionRules);
+            });
+        });
+        return newCfg;
+    }
+
+    private void makeBinary(ContextFreeGrammar cfg, Character head, HashSet<Character> variables, HashMap<Character, HashSet<String>> productionRules) {
+        for (String prod : productionRules.get(head)) {
+            if (prod.length() > 2) { //if it can be shortened
+                /*if (prod.charAt(0) == head) {
+                    continue; // Avoid operating self productions
+                }
+                for (String prod2 : productionRules.get(prod.charAt(0))) { //simulate it
+                    if (prod2.length() == 1 && prod2.charAt(0) == prod.charAt(0)) {
+                        simulateUnitaryProductions(cfg, prod2.charAt(0), variables, productionRules);
+                        return; // Avoid operating self productions
+                    }
+                    cfg.addProductionRule(head, prod2);
+                }*/
+            } else {
+                cfg.addProductionRule(head, prod);
+            }
+        }
     }
 
     public ContextFreeGrammar convertToCNF(ContextFreeGrammar cfg) {
@@ -317,7 +360,7 @@ public class ContextFreeGrammarOperations {
         //cfg = makeProductionsBinaryAndSimple(cfg);
         return cfg;
     }
-    
+
     public HashSet<Character>[][] getCykMatrix() {
         return cykMatrix;
     }

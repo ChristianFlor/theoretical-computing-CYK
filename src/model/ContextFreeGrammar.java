@@ -23,7 +23,6 @@ public class ContextFreeGrammar {
     /**
      * @return True if the variable was valid and was not already registered
      * @throws NullPointerException     if var is null
-     * @throws IllegalArgumentException When var is not an uppercase letter
      */
     public boolean addVariable(Character var) {
         if(var == null) {
