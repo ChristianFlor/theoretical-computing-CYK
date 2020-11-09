@@ -24,6 +24,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import model.ContextFreeGrammar;
+import model.ContextFreeGrammarOperations;
 
 /**
  * This class represents
@@ -42,6 +43,11 @@ public class MainController {
 	 */
 	@FXML
 	private ScrollPane scrollP1;
+	/**
+	 *
+	 */
+	@FXML
+	private ScrollPane scrollP2;
 	
 	/**
 	 * 
@@ -49,16 +55,19 @@ public class MainController {
 	@FXML
 	private TextField stringw;
 
-
 	/**
 	 * 
 	 */
-	private ContextFreeGrammar program;
+	private ContextFreeGrammarOperations program;
 
 	/**
 	 * The GridPane represents the view matrix for the algorithm
 	 */
 	private GridPane gridP1;
+	/**
+	 * The GridPane represents the view matrix for the algorithm
+	 */
+	private GridPane gridP2;
 
 	/**
 	 * 
@@ -123,6 +132,7 @@ public class MainController {
 
 		gramatic.setEditable(true);
 		gramatic.setText("");
+
 		Alert a = new Alert(AlertType.INFORMATION);
 		a.setContentText("Ingrese la gramatica");
 		a.show();
@@ -135,8 +145,8 @@ public class MainController {
 	void convert(ActionEvent event) {
 		try {
 			if( !gramatic.getText().isEmpty() ){
-				program = new ContextFreeGrammar();
-				//program.read(gramatic.getText()); //FIXME the method is in ContextFreeGrammarOperations.java
+				program = new ContextFreeGrammarOperations();
+				program.read(gramatic.getText()); //FIXME the method is in ContextFreeGrammarOperations.java
 				Alert a = new Alert(AlertType.INFORMATION);
 				a.setContentText("La gramatica se ha sido registrado correctamente");
 				a.show();
@@ -160,14 +170,52 @@ public class MainController {
 	 *
 	 */
 	@FXML
-	void algorithmCYK(ActionEvent event) {
+	void algorithmCYK(ActionEvent event) throws Exception {
 		String w = stringw.getText();
+		ContextFreeGrammar gfr = program.read(gramatic.getText());
 		gridP1 = new GridPane();
 		gridP1.setHgap(3);
 		gridP1.setVgap(3);
+		gridP2 = new GridPane();
+		gridP2.setHgap(3);
+		gridP2.setVgap(3);
 		scrollP1.setContent(gridP1);
+		scrollP2.setContent(gridP2);
 		//traer matrix resultante
-		//program.possibleW(w);
+		if(program.CYK(gfr, w)){
+			Alert a = new Alert(AlertType.INFORMATION);
+			a.setContentText("La gramatica SI genera la cadena "+w);
+			a.show();
+			for (int i = 0; i < program.getCykMatrix().length; i++) {
+				for (int j = 0; j < program.getCykMatrix()[i].length; j++) {
+					TextField ta = new TextField(w.charAt(i)+"");
+					ta.setEditable(false);
+					ta.setPrefWidth(30);
+					ta.setStyle(ta.getStyle() + "\n-fx-background-color: rgba(125, 156, 205, 0.84)");
+					gridP2.add(ta, 0, (i+1));
+
+					ta = new TextField("j="+(i+1));
+					ta.setEditable(false);
+					ta.setStyle(ta.getStyle() + "\n-fx-background-color: rgba(205, 125, 125, 0.84)");
+					ta.setPrefWidth(30);
+					gridP2.add(ta, (i+1), 0);
+
+					ta = new TextField("" + program.getCykMatrix()[i][j]);
+					ta.setStyle(ta.getStyle() + "\n-fx-background-color:  rgba(70, 214, 70, 0.75)");
+					ta.setEditable(false);
+					ta.setPrefWidth(80);
+					if(program.getCykMatrix()[i][j]!=null){
+						gridP2.add(ta, j + 1, i+1);
+					}
+
+				}
+			}
+		}else{
+			Alert a = new Alert(AlertType.ERROR);
+			a.setContentText("La gramatica NO genera la cadena "+w);
+			a.show();
+		}
+
 	}
 
 	/**
@@ -181,7 +229,7 @@ public class MainController {
 			ObjectInputStream entrada = new ObjectInputStream(new FileInputStream(file));
 			try {
 				
-				program = (ContextFreeGrammar) entrada.readObject();
+				program = (ContextFreeGrammarOperations) entrada.readObject();
 				entrada.close();
 
 			} catch (ClassNotFoundException e) {

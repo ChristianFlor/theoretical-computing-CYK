@@ -1,6 +1,5 @@
 package model;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -9,6 +8,8 @@ public class ContextFreeGrammarOperations {
     // TODO All in english
     // TODO Exception is too general
     // FIXME Take into account the above comments
+    private HashSet<Character>[][] cykMatrix;
+
     public ContextFreeGrammar read(String source) throws Exception {
         ContextFreeGrammar cfg = new ContextFreeGrammar();
         String[] lines = source.split("\n");
@@ -52,7 +53,7 @@ public class ContextFreeGrammarOperations {
             return cfg.getProductionRules().get(ContextFreeGrammar.START).contains(w);
         }
         int n = w.length();
-        HashSet<Character>[][] cykMatrix = new HashSet[n][n];
+        cykMatrix = new HashSet[n][n];
         // Initialize
         for (int i = 0; i < n; i++) {
             cykMatrix[i][0] = new HashSet<>();
@@ -70,6 +71,7 @@ public class ContextFreeGrammarOperations {
                         checkBodyInProduction(cfg, cykMatrix, body, i, j);
                     }
                 }
+
             }
         }
         return cykMatrix[0][n - 1].contains(ContextFreeGrammar.START);
@@ -319,5 +321,9 @@ public class ContextFreeGrammarOperations {
         System.out.println(cfg);
         //cfg = makeProductionsBinaryAndSimple(cfg);
         return cfg;
+    }
+    
+    public HashSet<Character>[][] getCykMatrix() {
+        return cykMatrix;
     }
 }

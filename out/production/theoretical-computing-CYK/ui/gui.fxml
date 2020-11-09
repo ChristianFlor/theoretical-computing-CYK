@@ -55,26 +55,48 @@
          <left>
             <BorderPane prefHeight="452.0" prefWidth="805.0" stylesheets="@dark-theme.css" BorderPane.alignment="CENTER">
                <left>
-                  <VBox alignment="CENTER" fillWidth="false" focusTraversable="true" prefHeight="586.0" prefWidth="613.0" spacing="5.0" BorderPane.alignment="CENTER">
+                  <VBox alignment="CENTER" fillWidth="false" focusTraversable="true" prefHeight="565.0" prefWidth="616.0" spacing="5.0" BorderPane.alignment="CENTER">
                      <children>
                         <Separator prefHeight="14.0" prefWidth="392.0" visible="false" />
-                        <VBox alignment="CENTER" prefHeight="410.0" prefWidth="597.0" style="-fx-border-color: #4285F4; -fx-border-width: 2; -fx-border-radius: 15;">
+                        <VBox alignment="CENTER" prefHeight="278.0" prefWidth="597.0" style="-fx-border-color: #4285F4; -fx-border-width: 2; -fx-border-radius: 15;">
                            <children>
-                              <Label contentDisplay="CENTER" prefHeight="30.0" prefWidth="139.0" text="GRAMATICA">
+                              <Label contentDisplay="CENTER" prefHeight="30.0" prefWidth="144.0" text="Gramatica">
                                  <font>
-                                    <Font name="Verdana Bold" size="20.0" />
+                                    <Font name="Verdana Bold" size="24.0" />
                                  </font>
                               </Label>
-                              <HBox alignment="CENTER" focusTraversable="true" prefHeight="279.0" prefWidth="562.0" spacing="8.0">
+                              <HBox alignment="CENTER" focusTraversable="true" prefHeight="182.0" prefWidth="593.0" spacing="8.0">
                                  <padding>
                                     <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
                                  </padding>
                                  <children>
-                                    <TextArea fx:id="gramatic" prefHeight="297.0" prefWidth="560.0" style="-fx-background-color: white;" styleClass="context-menu" />
+                                    <TextArea fx:id="gramatic" prefHeight="297.0" prefWidth="560.0" style="-fx-background-color: white;" styleClass="context-menu">
+                                       <font>
+                                          <Font size="16.0" />
+                                       </font></TextArea>
                                  </children>
                               </HBox>
-                              <Separator orientation="VERTICAL" prefHeight="25.0" prefWidth="372.0" visible="false" />
+                              <Separator orientation="VERTICAL" prefHeight="8.0" prefWidth="372.0" visible="false" />
                               <Button mnemonicParsing="false" onAction="#convert" text="Convertir a FNC" />
+                           </children>
+                        </VBox>
+                        <VBox alignment="CENTER" prefHeight="245.0" prefWidth="608.0" style="-fx-border-color: #4285F4; -fx-border-width: 2; -fx-border-radius: 15;">
+                           <children>
+                              <Label text="Gramatica en FNC">
+                                 <font>
+                                    <Font name="Verdana Bold" size="24.0" />
+                                 </font>
+                              </Label>
+                              <ScrollPane fx:id="scrollP1" prefHeight="323.0" prefWidth="637.0">
+                                 <content>
+                                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="186.0" prefWidth="598.0" />
+                                 </content>
+                              </ScrollPane>
+                              <HBox alignment="CENTER" prefHeight="31.0" prefWidth="348.0" spacing="8.0">
+                                 <padding>
+                                    <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+                                 </padding>
+                              </HBox>
                            </children>
                         </VBox>
                         <Button mnemonicParsing="false" onAction="#clean" text="Limpiar" />
@@ -87,7 +109,7 @@
                <right>
                   <VBox fillWidth="false" focusTraversable="true" prefHeight="545.0" prefWidth="659.0" BorderPane.alignment="CENTER">
                      <children>
-                        <Separator prefHeight="23.0" prefWidth="364.0" visible="false" />
+                        <Separator prefHeight="8.0" prefWidth="364.0" visible="false" />
                         <VBox alignment="CENTER" fillWidth="false" prefHeight="403.0" prefWidth="658.0" spacing="10.0" style="-fx-border-color: #4285F4; -fx-border-width: 2; -fx-border-radius: 15;">
                            <children>
                               <Label prefHeight="30.0" prefWidth="416.0" text="Tabla obtenida al hallar los Xij">
@@ -95,7 +117,7 @@
                                     <Font name="Verdana Bold" size="24.0" />
                                  </font>
                               </Label>
-                              <ScrollPane fx:id="scrollP1" prefHeight="323.0" prefWidth="637.0">
+                              <ScrollPane fx:id="scrollP2" prefHeight="323.0" prefWidth="637.0">
                                  <content>
                                     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="282.0" prefWidth="627.0" />
                                  </content>
@@ -125,6 +147,9 @@
                      </children>
                   </VBox>
                </right>
+               <center>
+                  <Separator orientation="VERTICAL" prefHeight="200.0" BorderPane.alignment="CENTER" />
+               </center>
             </BorderPane>
          </left>
       </BorderPane>
