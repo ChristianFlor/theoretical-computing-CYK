@@ -1,7 +1,0 @@
-S : AB | ACA | ab
-A : aAa | B | CD
-B : bB | bA
-
-C : cC | &
-
-D : aDc | CC | ABb

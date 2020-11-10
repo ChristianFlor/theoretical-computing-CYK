@@ -1,0 +1,15 @@
+﻿EJEMPLO TOMADO DEL TEXTO "Estudio Previo Sesión 21 (Algoritmos de decisión para GIC)"
+
+Grammar:
+
+S -> BA | AC
+A -> CC | b
+B -> AB | a
+C -> BA | a
+
+w strings:
+w           Result
+bbab        true
+baaba       true
+aaba        true (The book says it is false, it is a mistake)
+aaaaababb   false

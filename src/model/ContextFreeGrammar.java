@@ -10,7 +10,6 @@ public class ContextFreeGrammar {
     public final static String LAMBDA = "";
     private HashSet<Character> variables;
     private HashSet<Character> terminals;
-
     private HashMap<Character, HashSet<String>> productionRules;
 
     public ContextFreeGrammar() {
@@ -52,16 +51,12 @@ public class ContextFreeGrammar {
      * Associates the specified body to a new production of the head variable
      *
      * @param head The variable that produces the body
+     * @param body If body is the empty string then lambda is assumed. body must not be null
      * @return True if the production was added, false otherwise
-     * @throws IllegalArgumentException when T, which is a variable that can only be used by the grammar internally, is tried to be added manually (in the body)
-     * @paran body If body is the empty string then lambda is assumed. body must not be null
      */
     public boolean addProductionRule(Character head, String body) {
         if (!variables.contains(head)) {
             addVariable(head);
-        }
-        if (body.contains("T")) {
-            throw new IllegalArgumentException("T is a character that can only be used by the grammar to perform CNF conversion");
         }
         addVariablesAndTerminals(body); //register everything present in the body
         return productionRules.get(head).add(body);
@@ -97,8 +92,12 @@ public class ContextFreeGrammar {
             for (String body : bodies) {
                 line += (line.endsWith(">") ? " " : " | ") + " " + (body.equals(LAMBDA) ? "''" : body);
             }
-            output += line + "\n";
+            if(head != START) {
+                output += line + "\n";
+            } else {
+                output = line + "\n" + output;
+            }
         }
-        return output;
+        return output.trim();
     }
 }

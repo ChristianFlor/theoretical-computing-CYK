@@ -6,17 +6,13 @@
  */
 package ui;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Scanner;
-
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import model.ContextFreeGrammar;
-import model.ContextFreeGrammarOperations;
+
+import java.io.IOException;
 
 /**
  * This class 
@@ -27,30 +23,6 @@ public class Main extends Application{
 	 * This class represents
 	 */
 	public static void main(String[] args) {
-		Scanner s = new Scanner(System.in);
-		ContextFreeGrammarOperations cfgo = new ContextFreeGrammarOperations();
-		System.out.println("How many variables?");
-		int vars = Integer.parseInt(s.nextLine());
-		System.out.println("Write the productions in this format: V : AB | XY | a | b | ... | ''");
-		String input = "";
-		while(vars > 0) {
-			input += s.nextLine() + "\n";
-			vars--;
-		}
-
-		try {
-			ContextFreeGrammar cfg = cfgo.read(input);
-			System.out.println("****************");
-			cfg = cfgo.convertToCNF(cfg);
-			System.out.println("****************");
-
-			System.out.println("What string will you validate?");
-			System.out.println("RESULT: " + cfgo.CYK(cfg, s.nextLine()));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		s.close();
-
 		launch();
 	}
 	
@@ -62,7 +34,7 @@ public class Main extends Application{
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("gui.fxml"));
 		Parent root = loader.load();
 		Scene scene = new Scene(root);
-		stage.setTitle("Algortimo CYK");
+		stage.setTitle("CFG operations");
 		stage.setScene(scene);
 		stage.show();
 	}
