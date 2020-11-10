@@ -1,6 +1,6 @@
 /**~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  * Icesi University (Cali - Colombia)
- * @author Daniel Alejandro Fernandez Robles <daniel.fernandez1@correo.icesi.edu.co>
+ * @author Daniel Alejandro Fernandez Robles <daniel.fernandez3@correo.icesi.edu.co>
  * @author Christian David Flor Astudillo <christian.flor1@correo.icesi.edu.co>
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  */
@@ -37,7 +37,7 @@ public class MainController {
 	 *
 	 */
 	@FXML
-	private ScrollPane scrollP2;
+	private ScrollPane scrollPane;
 	
 	/**
 	 * 
@@ -66,7 +66,7 @@ public class MainController {
 		cfgTextArea.setText("");
 		cfgCNFTextArea.setText("");
 		stringW.setText("");
-		scrollP2.setContent(null);
+		scrollPane.setContent(null);
 	}
 
 	/**
@@ -99,17 +99,18 @@ public class MainController {
 	 *
 	 */
 	@FXML
-	public void algorithmCYK(ActionEvent event) throws Exception {
+	public void algorithmCYK(ActionEvent event) {
 		cfg = operator.read(cfgCNFTextArea.getText());
 		String w = stringW.getText();
 		matrix = new GridPane();
 		matrix.setHgap(3);
 		matrix.setVgap(3);
-		scrollP2.setContent(matrix);
-		//traer matrix resultante
+		scrollPane.setContent(matrix);
 		if(operator.CYK(cfg, w)){
 			Alert a = new Alert(AlertType.INFORMATION);
-			a.setContentText("The grammar does produce the string " + w);
+			a.setHeaderText("The grammar does produce the string");
+			a.setTitle("YES");
+			a.setContentText(w);
 			a.show();
 			for (int i = 0; i < operator.getCykMatrix().length; i++) {
 				for (int j = 0; j < operator.getCykMatrix()[i].length; j++) {
@@ -137,7 +138,9 @@ public class MainController {
 			}
 		}else{
 			Alert a = new Alert(AlertType.ERROR);
-			a.setContentText("The grammar does not produce the string " + w);
+			a.setHeaderText("The grammar does not produce the string");
+			a.setTitle("NO");
+			a.setContentText(w);
 			a.show();
 		}
 

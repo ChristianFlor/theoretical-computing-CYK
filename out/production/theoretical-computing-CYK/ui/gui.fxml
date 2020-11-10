@@ -74,7 +74,7 @@
                               </HBox>
                            </children>
                         </VBox>
-                        <Button mnemonicParsing="false" onAction="#clean" text="Clear all" />
+                        <Button mnemonicParsing="false" onAction="#clearAll" text="Clear all" />
                      </children>
                      <padding>
                         <Insets left="8.0" />
@@ -109,7 +109,7 @@
                               </Label>
                               <HBox alignment="CENTER" prefHeight="31.0" prefWidth="348.0" spacing="8.0">
                                  <children>
-                                    <TextField fx:id="stringw" prefHeight="37.0" prefWidth="159.0" promptText="input string" style="-fx-background-color: white; -fx-text-fill: black;" styleClass="context-menu" />
+                                    <TextField fx:id="stringW" prefHeight="37.0" prefWidth="159.0" promptText="input string" style="-fx-background-color: white; -fx-text-fill: black;" styleClass="context-menu" />
                                     <Button mnemonicParsing="false" onAction="#algorithmCYK" prefHeight="39.0" prefWidth="139.0" text="CYK test" />
                                  </children>
                                  <padding>

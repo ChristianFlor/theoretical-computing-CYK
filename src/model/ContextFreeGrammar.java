@@ -2,10 +2,8 @@ package model;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 
 public class ContextFreeGrammar {
-    public static final String DATA_PATH = "./data/answers.txt";
     public final static Character START = 'S';
     public final static String LAMBDA = "";
     private HashSet<Character> variables;
