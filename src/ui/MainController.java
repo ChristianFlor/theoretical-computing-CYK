@@ -42,7 +42,7 @@ public class MainController {
 	 * 
 	 */
 	@FXML
-	private ScrollPane scrollP1;
+	private TextArea gramaticFNC;
 	/**
 	 *
 	 */
@@ -63,11 +63,9 @@ public class MainController {
 	/**
 	 * The GridPane represents the view matrix for the algorithm
 	 */
-	private GridPane gridP1;
-	/**
-	 * The GridPane represents the view matrix for the algorithm
-	 */
 	private GridPane gridP2;
+
+	private ContextFreeGrammar gfr;
 
 	/**
 	 * 
@@ -75,7 +73,7 @@ public class MainController {
 	@FXML
 	void aboutProgram(ActionEvent event) {
 		Alert alert = new Alert(AlertType.INFORMATION);
-		alert.setContentText("Programa para poder pasar Informatica Teorica");
+		alert.setContentText("Program that from a context-independent grammar G and a string w establishes whether the grammar generates said string, is say w ∈ L (G). \n\nCreated by: \n -Daniel Fernandez \n -Christian Flor ");
 		alert.show();
 	}
 
@@ -132,6 +130,9 @@ public class MainController {
 
 		gramatic.setEditable(true);
 		gramatic.setText("");
+		gramaticFNC.setText("");
+		stringw.setText("");
+		scrollP2.setContent(null);
 
 		Alert a = new Alert(AlertType.INFORMATION);
 		a.setContentText("Ingrese la gramatica");
@@ -146,12 +147,14 @@ public class MainController {
 		try {
 			if( !gramatic.getText().isEmpty() ){
 				program = new ContextFreeGrammarOperations();
-				program.read(gramatic.getText()); //FIXME the method is in ContextFreeGrammarOperations.java
+				gfr= program.read(gramatic.getText()); //FIXME the method is in ContextFreeGrammarOperations.java
 				Alert a = new Alert(AlertType.INFORMATION);
 				a.setContentText("La gramatica se ha sido registrado correctamente");
 				a.show();
 				gramatic.setEditable(false);
-
+				gfr=program.convertToCNF(gfr);
+				gramaticFNC.setText(program.convertToCNF(gfr)+"");
+				gramaticFNC.setEditable(false);
 			}else {
 				Alert b = new Alert(AlertType.ERROR);
 				b.setContentText("Los gramatica no puede ser registrar, debe tener contenido");
@@ -172,14 +175,9 @@ public class MainController {
 	@FXML
 	void algorithmCYK(ActionEvent event) throws Exception {
 		String w = stringw.getText();
-		ContextFreeGrammar gfr = program.read(gramatic.getText());
-		gridP1 = new GridPane();
-		gridP1.setHgap(3);
-		gridP1.setVgap(3);
 		gridP2 = new GridPane();
 		gridP2.setHgap(3);
 		gridP2.setVgap(3);
-		scrollP1.setContent(gridP1);
 		scrollP2.setContent(gridP2);
 		//traer matrix resultante
 		if(program.CYK(gfr, w)){
