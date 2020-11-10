@@ -4,18 +4,19 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 public class ContextFreeGrammarOperations {
-
+    private static char newVar; // used to keep track of newly inserted variables in CNF conversion
     private HashSet<Character>[][] cykMatrix;
 
     /**
      * Reads a grammar from a given string.
      * Please use S as the start variable and do not use the last letters from the alphabet (Z, Y, X...) as they are
      * used as new variables in the process of CNF conversion
+     *
      * @param source The string representation of the grammar which is similar to the format of {@link ContextFreeGrammar}.toString()
      * @return A context free grammar representation of source string
      * @throws IllegalArgumentException if the format of input string source is incorrect
      */
-    public ContextFreeGrammar read(String source) throws Exception {
+    public ContextFreeGrammar read(String source) throws IllegalArgumentException {
         ContextFreeGrammar cfg = new ContextFreeGrammar();
         String[] lines = source.split("\n");
         for (int i = 0; i < lines.length; i++) {
@@ -272,7 +273,7 @@ public class ContextFreeGrammarOperations {
             newCfg.addVariable(head);
             newCfg.getProductionRules().get(head).remove(head.toString()); //remove unitary self production
             bodies.forEach(body -> {
-                simulateUnitaryProductions(newCfg, head, variables, originalProductionRules);
+                simulateUnitaryProductions(newCfg, head, body, variables, originalProductionRules);
             });
         });
         //after that there are not unitary productions, but maybe there are variables without productions, delete them
@@ -284,22 +285,20 @@ public class ContextFreeGrammarOperations {
         return newCfg;
     }
 
-    private void simulateUnitaryProductions(ContextFreeGrammar cfg, Character head, HashSet<Character> variables, HashMap<Character, HashSet<String>> productionRules) {
-        for (String prod : productionRules.get(head)) {
-            if (prod.length() == 1 && variables.contains(prod.charAt(0))) { //if it is a unitary production
-                if (prod.charAt(0) == head) {
-                    continue; // Avoid operating self productions
+    private void simulateUnitaryProductions(ContextFreeGrammar cfg, Character head, String body, HashSet<Character> variables, HashMap<Character, HashSet<String>> productionRules) {
+        if (body.length() == 1 && variables.contains(body.charAt(0)) && body.charAt(0) != head) { //if it is a unitary production and it is not self production
+            for (String prod : productionRules.get(body.charAt(0))) { //simulate it
+                if (prod.length() == 1 && prod.charAt(0) == body.charAt(0)) {
+                    char p2 = prod.charAt(0);
+                    productionRules.get(p2).forEach(body2 -> {
+                        simulateUnitaryProductions(cfg, p2, body2, variables, productionRules);
+                    });
+                    return; // Avoid operating self productions
                 }
-                for (String prod2 : productionRules.get(prod.charAt(0))) { //simulate it
-                    if (prod2.length() == 1 && prod2.charAt(0) == prod.charAt(0)) {
-                        simulateUnitaryProductions(cfg, prod2.charAt(0), variables, productionRules);
-                        return; // Avoid operating self productions
-                    }
-                    cfg.addProductionRule(head, prod2);
-                }
-            } else {
                 cfg.addProductionRule(head, prod);
             }
+        } else {
+            cfg.addProductionRule(head, body);
         }
     }
 
@@ -308,37 +307,68 @@ public class ContextFreeGrammarOperations {
         HashSet<Character> terminals = (HashSet<Character>) cfg.getTerminals().clone();
         HashMap<Character, HashSet<String>> originalProductionRules = cfg.getProductionRules();
         ContextFreeGrammar newCfg = new ContextFreeGrammar();
-        char newVar = 'Z';
-        for(Character term : terminals) {
+        HashMap<String, Character> auxProdToVar = new HashMap<>();
+        // Add new variables for each terminal
+        newVar = 'Z';
+        for (Character term : terminals) {
             newCfg.addVariable(newVar);
             newCfg.addProductionRule(newVar, term.toString());
+            auxProdToVar.put(term.toString(), newVar);
             newVar--;
         }
+        // Replace terminals in productions with their new simple variables that produce one terminal each
         originalProductionRules.forEach((head, bodies) -> {
             newCfg.addVariable(head);
-            bodies.forEach(body -> {
-                makeBinary(newCfg, head, variables, originalProductionRules);
+            ((HashSet<String>)bodies.clone()).forEach(prod -> {
+                newCfg.getProductionRules().get(head).remove(prod);
+                for (int i = 0; i < prod.length(); i++) {
+                    String c = prod.charAt(i) + "";
+                    if (auxProdToVar.containsKey(c)) {
+                        prod = prod.replace(c, auxProdToVar.get(c).toString());
+                    }
+                }
+                newCfg.addProductionRule(head, prod);
+            });
+        });
+        System.out.println("*********************");
+        System.out.println(newCfg);
+        System.out.println("*********************");
+        originalProductionRules.forEach((head, bodies) -> {
+            ((HashSet<String>)bodies.clone()).forEach(body -> {
+                makeBinary(newCfg, head, body, auxProdToVar);
             });
         });
         return newCfg;
     }
 
-    private void makeBinary(ContextFreeGrammar cfg, Character head, HashSet<Character> variables, HashMap<Character, HashSet<String>> productionRules) {
-        for (String prod : productionRules.get(head)) {
-            if (prod.length() > 2) { //if it can be shortened
-                /*if (prod.charAt(0) == head) {
-                    continue; // Avoid operating self productions
-                }
-                for (String prod2 : productionRules.get(prod.charAt(0))) { //simulate it
-                    if (prod2.length() == 1 && prod2.charAt(0) == prod.charAt(0)) {
-                        simulateUnitaryProductions(cfg, prod2.charAt(0), variables, productionRules);
-                        return; // Avoid operating self productions
-                    }
-                    cfg.addProductionRule(head, prod2);
-                }*/
-            } else {
-                cfg.addProductionRule(head, prod);
+    private void makeBinary(ContextFreeGrammar cfg, Character head, String oldBody, HashMap<String, Character> prodToVariable) {
+        if(head == null) {
+            head = newVar;
+            newVar--;
+        }
+        if (oldBody.length() > 2) { //if it can be shortened
+            String firstTwo = oldBody.substring(0, 2);
+            String newBody = "";
+            if(prodToVariable.containsKey(firstTwo)) {
+                newBody = prodToVariable.get(firstTwo).toString();
             }
+            if(newBody.isEmpty()) { // No auxiliary produced the first two digits concatenated
+                cfg.addVariable(newVar);
+                cfg.addProductionRule(newVar, firstTwo);
+                prodToVariable.put(firstTwo, newVar);
+                newVar--;
+            }
+            if(oldBody.length() == 3) { //
+                newBody += oldBody.charAt(2);
+            } else {
+                String remainder = oldBody.substring(2);
+                makeBinary(cfg, null, remainder, prodToVariable);
+                newBody += prodToVariable.get(remainder);
+            }
+            cfg.addProductionRule(head, newBody);
+            cfg.getProductionRules().get(head).remove(oldBody);
+        } else {
+            cfg.addProductionRule(head, oldBody);
         }
     }
 
@@ -357,7 +387,9 @@ public class ContextFreeGrammarOperations {
         cfg = removeUnitaryProductions(cfg);
         System.out.println("removeUnitaryProductions");
         System.out.println(cfg);
-        //cfg = makeProductionsBinaryAndSimple(cfg);
+        cfg = makeProductionsBinaryAndSimple(cfg);
+        System.out.println("makeProductionsBinaryAndSimple");
+        System.out.println(cfg);
         return cfg;
     }
 
