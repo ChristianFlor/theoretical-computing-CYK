@@ -28,6 +28,8 @@ public class MainController {
 	@FXML
 	private TextArea cfgTextArea;
 
+	public final static int CHAR_LENGTH = 20;
+
 	/**
 	 * 
 	 */
@@ -102,40 +104,12 @@ public class MainController {
 	public void algorithmCYK(ActionEvent event) {
 		cfg = operator.read(cfgCNFTextArea.getText());
 		String w = stringW.getText();
-		matrix = new GridPane();
-		matrix.setHgap(3);
-		matrix.setVgap(3);
-		scrollPane.setContent(matrix);
 		if(operator.CYK(cfg, w)){
 			Alert a = new Alert(AlertType.INFORMATION);
 			a.setHeaderText("The grammar does produce the string");
 			a.setTitle("YES");
 			a.setContentText(w);
 			a.show();
-			for (int i = 0; i < operator.getCykMatrix().length; i++) {
-				for (int j = 0; j < operator.getCykMatrix()[i].length; j++) {
-					TextField ta = new TextField(w.charAt(i)+"");
-					ta.setEditable(false);
-					ta.setPrefWidth(30);
-					ta.setStyle(ta.getStyle() + "\n-fx-background-color: rgba(125, 156, 205, 0.84)");
-					matrix.add(ta, 0, (i+1));
-
-					ta = new TextField("j="+(i+1));
-					ta.setEditable(false);
-					ta.setStyle(ta.getStyle() + "\n-fx-background-color: rgba(205, 125, 125, 0.84)");
-					ta.setPrefWidth(30);
-					matrix.add(ta, (i+1), 0);
-
-					ta = new TextField("" + operator.getCykMatrix()[i][j]);
-					ta.setStyle(ta.getStyle() + "\n-fx-background-color:  rgba(70, 214, 70, 0.75)");
-					ta.setEditable(false);
-					ta.setPrefWidth(80);
-					if(operator.getCykMatrix()[i][j]!=null){
-						matrix.add(ta, j + 1, i+1);
-					}
-
-				}
-			}
 		}else{
 			Alert a = new Alert(AlertType.ERROR);
 			a.setHeaderText("The grammar does not produce the string");
@@ -143,7 +117,40 @@ public class MainController {
 			a.setContentText(w);
 			a.show();
 		}
+		fillCykMatrix(w);
+	}
 
+	private void fillCykMatrix(String w) {
+		matrix = new GridPane();
+		matrix.setHgap(3);
+		matrix.setVgap(3);
+		scrollPane.setContent(matrix);
+		for (int i = 0; i < operator.getCykMatrix().length; i++) {
+			for (int j = 0; j < operator.getCykMatrix()[i].length; j++) {
+				TextField ta = new TextField(w.charAt(i)+"");
+				ta.setEditable(false);
+				ta.setPrefWidth(30);
+				ta.setStyle(ta.getStyle() + "\n-fx-background-color: rgba(125, 156, 205, 0.84)");
+				matrix.add(ta, 0, (i+1));
+
+				String content = "";
+
+				if(operator.getCykMatrix()[i][j] != null){
+					content = operator.getCykMatrix()[i][j].toString().replace("[", "{").replace("]", "}");
+					ta = new TextField("" + content);
+					ta.setStyle(ta.getStyle() + "\n-fx-background-color:  rgba(70, 214, 70, 0.75)");
+					ta.setEditable(false);
+					ta.setPrefWidth(content.replace(", ", "").length() * CHAR_LENGTH);
+					matrix.add(ta, j + 1, i+1);
+
+					ta = new TextField("j="+(i+1));
+					ta.setEditable(false);
+					ta.setStyle(ta.getStyle() + "\n-fx-background-color: rgba(205, 125, 125, 0.84)");
+					ta.setPrefWidth(3 * CHAR_LENGTH);
+					matrix.add(ta, (i+1), 0);
+				}
+			}
+		}
 	}
 
 	/**
