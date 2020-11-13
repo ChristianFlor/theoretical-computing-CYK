@@ -1,0 +1,4 @@
+Christian Flor
+Daniel Fernandez
+
+Please refer to https://github.com/ChristianFlor/theoretical-computing-CYK/blob/main/README.md
