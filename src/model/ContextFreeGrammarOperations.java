@@ -4,7 +4,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 public class ContextFreeGrammarOperations {
-    private static char newVar; // used to keep track of newly inserted variables in CNF conversion
+    /**
+     * used to keep track of newly inserted variables in CNF conversion
+     */
+    private static char newVar;
+    /**
+     * This cykMatrix represents the resulting matrix after applying the CYK algorithm to a grammar
+     */
     private HashSet<Character>[][] cykMatrix;
 
     /**
@@ -49,7 +55,7 @@ public class ContextFreeGrammarOperations {
      * Validates whether the given grammar produces the specified String
      *
      * @param cfg A context-free grammar that is assumed to be in CNF.
-     * @param w   The String that wants to be validated. It is assumed that the String contains only terminals or is lambda
+     * @param w The String that wants to be validated. It is assumed that the String contains only terminals or is lambda
      * @return true if the grammar produces the given String, false otherwise
      */
     public boolean CYK(ContextFreeGrammar cfg, String w) {
@@ -81,6 +87,14 @@ public class ContextFreeGrammarOperations {
         return cykMatrix[0][n - 1].contains(ContextFreeGrammar.START);
     }
 
+    /**
+     * This method checks if the grammar is in body production
+     * @param cfg A context-free grammar that is assumed to be in CNF.
+     * @param cykMatrix represents the resulting matrix after applying the CYK algorithm to a grammar
+     * @param w The String that wants to be validated. It is assumed that the String contains only terminals or is lambda
+     * @param i represents the value of the matrix row
+     * @param j represents the value of the matrix column
+     */
     private void checkBodyInProduction(ContextFreeGrammar cfg, HashSet<Character>[][] cykMatrix, String w, int i, int j) {
         for (char head : cfg.getVariables()) { // check the variables
             for (String body : cfg.getProductionRules().get(head)) { // and their productions
@@ -92,6 +106,12 @@ public class ContextFreeGrammarOperations {
         }
     }
 
+    /**
+     * This method realizes the cartesian product between two characters
+     * @param B represents the first value of a character hashset
+     * @param C represents the second value of a character hashset
+     * @return the cartesian product between the two characters
+     */
     private String[] cartesianProduct(HashSet<Character> B, HashSet<Character> C) {
         String[] cp = new String[B.size() * C.size()];
         int i = 0;
@@ -104,6 +124,11 @@ public class ContextFreeGrammarOperations {
         return cp;
     }
 
+    /**
+     * This method removes the terminal variables from the grammar entered by the user
+     * @param cfg A user-typed context free grammar
+     * @return context-free grammar are terminal variables
+     */
     private ContextFreeGrammar removeNonTerminalVariables(ContextFreeGrammar cfg) {
         HashSet<Character> term = new HashSet<>();
         HashSet<Character> nonTerm = (HashSet<Character>) cfg.getVariables().clone(); // it is nonterm only after finding all terminal variables
@@ -163,6 +188,11 @@ public class ContextFreeGrammarOperations {
         return newCfg;
     }
 
+    /**
+     * This method removes the unreachable variables from the user-entered grammar
+     * @param cfg A user-typed context free grammar
+     * @return context-free grammar without unreachable variables
+     */
     private ContextFreeGrammar removeNonReachableVariables(ContextFreeGrammar cfg) {
         HashSet<Character> alc = new HashSet<>();
         HashSet<Character> variables = cfg.getVariables();
@@ -197,6 +227,11 @@ public class ContextFreeGrammarOperations {
         return newCfg;
     }
 
+    /**
+     * This method removes the lambda productions from the user-entered grammar
+     * @param cfg A user-typed context free grammar
+     * @return returns context-free grammar without lambda productions
+     */
     private ContextFreeGrammar removeLambdaProductions(ContextFreeGrammar cfg) {
         HashSet<Character> anul = new HashSet<>();
         HashSet<Character> variables = (HashSet<Character>) cfg.getVariables().clone();
@@ -257,6 +292,13 @@ public class ContextFreeGrammarOperations {
         return newCfg;
     }
 
+    /**
+     * This method simulates variables that accept null values in productions
+     * @param head The variable that produces the body
+     * @param body If body is the empty string then lambda is assumed. body must not be null
+     * @param nullable the possible character that is nullable
+     * @param productionRules This character hashMap and string hashSet represents the identified production rules
+     */
     private void simulateNullableVariablesInProductions(Character head, String body, Character nullable, HashMap<Character, HashSet<String>> productionRules) {
         int lastIndex = body.indexOf(nullable);
         while (lastIndex != -1) {
@@ -265,6 +307,11 @@ public class ContextFreeGrammarOperations {
         }
     }
 
+    /**
+     * This method removes unit productions from context-free grammar
+     * @param cfg A user-typed context free grammar
+     * @return context-free grammar after removing unit productions
+     */
     private ContextFreeGrammar removeUnitaryProductions(ContextFreeGrammar cfg) {
         HashSet<Character> variables = (HashSet<Character>) cfg.getVariables().clone();
         HashMap<Character, HashSet<String>> originalProductionRules = cfg.getProductionRules();
@@ -285,6 +332,14 @@ public class ContextFreeGrammarOperations {
         return newCfg;
     }
 
+    /**
+     * This method simulates the grammar entered by the user in a unit production
+     * @param cfg A user-typed context free grammar
+     * @param head The variable that produces the body
+     * @param body If body is the empty string then lambda is assumed. body must not be null
+     * @param variables This character hashSet represents the identified grammar variables
+     * @param productionRules This character hashMap and string hashSet represents the identified production rules
+     */
     private void simulateUnitaryProductions(ContextFreeGrammar cfg, Character head, String body, HashSet<Character> variables, HashMap<Character, HashSet<String>> productionRules) {
         if (body.length() == 1 && variables.contains(body.charAt(0)) && body.charAt(0) != head) { //if it is a unitary production and it is not self production
             for (String prod : productionRules.get(body.charAt(0))) { //simulate it
@@ -302,6 +357,11 @@ public class ContextFreeGrammarOperations {
         }
     }
 
+    /**
+     * This method makes binary and simple productions
+     * @param cfg A context-free grammar that is assumed to be in CNF.
+     * @return a context-free grammar with built-in simple and binary productions
+     */
     private ContextFreeGrammar makeProductionsBinaryAndSimple(ContextFreeGrammar cfg) {
         HashSet<Character> terminals = (HashSet<Character>) cfg.getTerminals().clone();
         HashMap<Character, HashSet<String>> originalProductionRules = cfg.getProductionRules();
@@ -339,6 +399,13 @@ public class ContextFreeGrammarOperations {
         return removeNonReachableVariables(newCfg);
     }
 
+    /**
+     * This method do the grammar in binary
+     * @param cfg A user-typed context free grammar
+     * @param head The variable that produces the body
+     * @param oldBody If old body is the empty string then lambda is assumed. body must not be null
+     * @param prodToVariable represents a hashmap that returns a production and is passed to a variable
+     */
     private void makeBinary(ContextFreeGrammar cfg, Character head, String oldBody, HashMap<String, Character> prodToVariable) {
         if (head == null) {
             head = newVar;
@@ -374,6 +441,11 @@ public class ContextFreeGrammarOperations {
         }
     }
 
+    /**
+     * This method converts the grammar entered by the user to a grammar in chomsky normal form
+     * @param cfg A user-typed context free grammar
+     * @return chomsky's grammar in normal form
+     */
     public ContextFreeGrammar convertToCNF(ContextFreeGrammar cfg) {
         cfg = removeNonTerminalVariables(cfg);
         cfg = removeNonReachableVariables(cfg);
@@ -383,6 +455,9 @@ public class ContextFreeGrammarOperations {
         return cfg;
     }
 
+    /**
+     * @return the resulting matrix after applying the c and k algorithm on a grammar
+     */
     public HashSet<Character>[][] getCykMatrix() {
         return cykMatrix;
     }

@@ -23,7 +23,7 @@ import model.ContextFreeGrammarOperations;
 public class MainController {
 
 	/**
-	 * 
+	 * The cfgTextArea represents the grammar entered by the user
 	 */
 	@FXML
 	private TextArea cfgTextArea;
@@ -31,24 +31,24 @@ public class MainController {
 	public final static int CHAR_LENGTH = 20;
 
 	/**
-	 * 
+	 * The cfgCNFTextArea represents grammar in chomsky normal form
 	 */
 	@FXML
 	private TextArea cfgCNFTextArea;
 	/**
-	 *
+	 * The ScrollPane is the area where the result of matrix ij is created
 	 */
 	@FXML
 	private ScrollPane scrollPane;
 	
 	/**
-	 * 
+	 * represents the attribute that allows us to obtain w for the algorithm cyk
 	 */
 	@FXML
 	private TextField stringW;
 
 	/**
-	 * 
+	 * Represents the relationship with the operations of context-free grammar
 	 */
 	private ContextFreeGrammarOperations operator;
 
@@ -56,11 +56,13 @@ public class MainController {
 	 * The GridPane represents the view matrix for the algorithm
 	 */
 	private GridPane matrix;
-
+	/**
+	 * This cfg represents the relationship with context-free grammar
+	 */
 	private ContextFreeGrammar cfg;
 
 	/**
-	 *
+	 * This method clears the areas where grammar is displayed or written
 	 */
 	@FXML
 	public void clearAll(ActionEvent event) {
@@ -72,7 +74,7 @@ public class MainController {
 	}
 
 	/**
-	 * 
+	 * This method reads the grammar registered by the user and converts it to chomsky normal form and displays it
 	 */
 	@FXML
 	public void convert(ActionEvent event) {
@@ -98,7 +100,7 @@ public class MainController {
 	}
 
 	/**
-	 *
+	 * this method reads the grammar registered by the user and applies the algorithm cyk
 	 */
 	@FXML
 	public void algorithmCYK(ActionEvent event) {
@@ -120,6 +122,10 @@ public class MainController {
 		fillCykMatrix(w);
 	}
 
+	/**
+	 * This method fills the matrix cyk obtained in the model to show it to the user in an intuitive way
+	 * @param w The String that wants to be validated. It is assumed that the String contains only terminals or is lambda
+	 */
 	private void fillCykMatrix(String w) {
 		matrix = new GridPane();
 		matrix.setHgap(3);
@@ -154,7 +160,8 @@ public class MainController {
 	}
 
 	/**
-	 * 
+	 * <b>Description:</b>
+	 * The initialize function of the fxml file, called as soon as the graphical interface is loaded.
 	 */
 	public void initialize() {
 		operator = new ContextFreeGrammarOperations();

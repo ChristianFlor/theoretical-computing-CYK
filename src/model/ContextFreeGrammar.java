@@ -4,12 +4,30 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 public class ContextFreeGrammar {
+    /**
+     * This constant represents the initial character of the grammar
+     */
     public final static Character START = 'S';
+    /**
+     * This constant represents the lambda character used in a grammar
+     */
     public final static String LAMBDA = "";
+    /**
+     * This character hashSet represents the identified grammar variables
+     */
     private HashSet<Character> variables;
+    /**
+     * This character hashSet represents the identified grammar terminals
+     */
     private HashSet<Character> terminals;
+    /**
+     * This character hashMap and string hashSet represents the identified production rules
+     */
     private HashMap<Character, HashSet<String>> productionRules;
 
+    /**
+     * This function creates a new context-free Grammar
+     */
     public ContextFreeGrammar() {
         variables = new HashSet<>();
         terminals = new HashSet<>();
@@ -18,6 +36,8 @@ public class ContextFreeGrammar {
     }
 
     /**
+     * Thie method add a variable to the production rule
+     * @param  var represents a possible character to variable
      * @return True if the variable was valid and was not already registered
      * @throws NullPointerException     if var is null
      */
@@ -35,6 +55,12 @@ public class ContextFreeGrammar {
         return false;
     }
 
+    /**
+     * This method add a terminal to the list of terminals
+     * @param term  represents a possible character to terminal
+     * @return True if the variable was terminal and was not already registered
+     * @throws NullPointerException     if var is null
+     */
     public boolean addTerminal(Character term) {
         if (term == null) {
             throw new NullPointerException("null cannot be a terminal");
@@ -47,7 +73,6 @@ public class ContextFreeGrammar {
 
     /**
      * Associates the specified body to a new production of the head variable
-     *
      * @param head The variable that produces the body
      * @param body If body is the empty string then lambda is assumed. body must not be null
      * @return True if the production was added, false otherwise
@@ -60,27 +85,42 @@ public class ContextFreeGrammar {
         return productionRules.get(head).add(body);
     }
 
+    /**
+     *try to add as variable and terminal as a maximum of one method will actually add the character to a set
+     * @param string represents a character that is added to variable and terminal
+     */
     public void addVariablesAndTerminals(String string) {
         for (int i = 0; i < string.length(); i++) {
             Character c = string.charAt(i);
-            //try to add as variable and terminal as a maximum of one method will actually add the character to a set
             addVariable(c);
             addTerminal(c);
         }
     }
 
+    /**
+     * @return the character hashset of variables in context-free grammar
+     */
     public HashSet<Character> getVariables() {
         return variables;
     }
 
+    /**
+     * @return the terminal character hashset in context-free grammar
+     */
     public HashSet<Character> getTerminals() {
         return terminals;
     }
 
+    /**
+     * @return the character hashmap and string hashset of the production rules in context-free grammar
+     */
     public HashMap<Character, HashSet<String>> getProductionRules() {
         return productionRules;
     }
 
+    /**
+     * @return a string with all the grammar that has been generated with the different parameters
+     */
     @Override
     public String toString() {
         String output = "";
